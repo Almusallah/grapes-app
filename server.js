@@ -27,7 +27,10 @@ function allWines() {
   return WINERIES.flatMap((w) =>
     w.wines.map((v) => ({
       ...v,
-      winery: { id: w.id, name: w.name, town: w.town, region: w.region, founded: w.founded },
+      winery: {
+        id: w.id, name: w.name, town: w.town, region: w.region,
+        localita: w.localita, practices: w.practices || [], founded: w.founded,
+      },
     }))
   );
 }
@@ -37,8 +40,10 @@ app.get("/api/wineries", (_req, res) => res.json(WINERIES));
 
 app.get("/api/wines", (req, res) => {
   let out = allWines();
-  const { region, type, winery, q } = req.query;
+  const { region, localita, practice, type, winery, q } = req.query;
   if (region) out = out.filter((w) => w.winery.region === region);
+  if (localita) out = out.filter((w) => w.winery.localita === localita);
+  if (practice) out = out.filter((w) => (w.winery.practices || []).includes(practice));
   if (type) out = out.filter((w) => w.type === type);
   if (winery) out = out.filter((w) => w.winery.id === winery);
   if (q) {
@@ -48,7 +53,8 @@ app.get("/api/wines", (req, res) => {
         w.name.toLowerCase().includes(s) ||
         w.denom.toLowerCase().includes(s) ||
         w.winery.name.toLowerCase().includes(s) ||
-        w.winery.region.toLowerCase().includes(s)
+        w.winery.region.toLowerCase().includes(s) ||
+        (w.winery.localita || "").toLowerCase().includes(s)
     );
   }
   res.json(out);
@@ -57,6 +63,17 @@ app.get("/api/wines", (req, res) => {
 app.get("/api/regions", (_req, res) =>
   res.json([...new Set(WINERIES.map((w) => w.region))].sort())
 );
+
+// Facce filtro: regioni, località e pratiche con conteggi.
+app.get("/api/facets", (_req, res) => {
+  const count = (arr) =>
+    arr.reduce((m, k) => ((m[k] = (m[k] || 0) + 1), m), {});
+  res.json({
+    regions: count(WINERIES.map((w) => w.region)),
+    localitas: WINERIES.map((w) => ({ localita: w.localita, region: w.region })),
+    practices: count(WINERIES.flatMap((w) => w.practices || [])),
+  });
+});
 
 // Spedizione vino: cartoni anti-urto da 6, corriere convenzionato.
 // Gratuita sopra €89; +2 giorni per le isole (se il cliente non è sull'isola

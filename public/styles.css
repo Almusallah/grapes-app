@@ -313,3 +313,87 @@ footer { background: var(--bordeaux-ink); color: #cdbfa8; margin-top: 64px; }
   .hero h1 { font-size: 32px; }
   .float-card { display: none; }
 }
+
+/* ============================================================
+   Espansione: filtri, badge filosofia, toast, back-to-top
+   ============================================================ */
+
+/* ---- Filter bar ---- */
+.filterbar {
+  background: #fff; border: 1px solid var(--bordo); border-radius: 18px;
+  padding: 18px 20px 12px; box-shadow: var(--ombra);
+  position: sticky; top: 74px; z-index: 20;
+}
+.fb-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 5px 0; }
+.fb-label {
+  font-size: 10.5px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--grigio); flex: none; min-width: 74px;
+}
+.fb-chips { display: flex; gap: 7px; flex-wrap: wrap; }
+.fb-chips .chip { padding: 6px 13px; font-size: 12.5px; }
+.fb-chips .chip .n { opacity: .55; font-weight: 500; margin-left: 3px; }
+.chip.prac { display: inline-flex; align-items: center; gap: 5px; }
+.chip.prac.active-nat { background: #3f6b46; border-color: #3f6b46; color: #fff; }
+.chip.prac.active-bio { background: #7a5f21; border-color: #7a5f21; color: #fff; }
+.chip.prac.active-org { background: #4c6b4f; border-color: #4c6b4f; color: #fff; }
+.chip.prac.active-hero { background: #54432e; border-color: #54432e; color: #fff; }
+.fb-status { border-top: 1px dashed var(--bordo); margin-top: 6px; padding-top: 9px; justify-content: space-between; }
+.fb-count { font-size: 12.5px; color: var(--grigio); font-weight: 600; }
+.fb-reset {
+  border: none; background: none; color: var(--bordeaux-mid); font-size: 12.5px;
+  font-weight: 700; padding: 4px 8px; border-radius: 8px;
+}
+.fb-reset:hover { background: #f6e7e2; }
+
+/* ---- Practice badges ---- */
+.prac-badges { display: flex; gap: 6px; flex-wrap: wrap; margin: 0 0 8px; }
+.prac-badge {
+  font-size: 10.5px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase;
+  border-radius: 999px; padding: 3px 9px; display: inline-flex; align-items: center; gap: 4px;
+}
+.pb-naturale { background: #e4efe2; color: #3f6b46; }
+.pb-biodinamica { background: #f5ecd4; color: #7a5f21; }
+.pb-biologica { background: #e6efe7; color: #4c6b4f; }
+.pb-eroica { background: #efe4d5; color: #54432e; }
+.wine-card .prac-badges { position: absolute; bottom: 8px; left: 10px; margin: 0; }
+
+/* ---- Winery modal ---- */
+.wm-photo { width: 100%; height: 200px; object-fit: cover; display: block; }
+.wm-meta { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin: 4px 0 10px; }
+.wm-wines { margin-top: 14px; border-top: 1px solid var(--bordo); padding-top: 10px; }
+.wm-wine { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px dashed var(--bordo); }
+.wm-wine img { width: 34px; height: 52px; object-fit: contain; mix-blend-mode: multiply; flex: none; }
+.wm-wine .wmw-main { flex: 1; min-width: 0; }
+.wm-wine h5 { margin: 0; font-size: 14px; }
+.wm-wine small { color: var(--grigio); font-size: 12px; }
+.wm-wine .price { font-size: 16px; }
+.wm-wine .add { padding: 7px 12px; font-size: 12px; }
+
+/* ---- Toast ---- */
+.toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translate(-50%, 80px);
+  background: var(--bordeaux-ink); color: var(--crema); font-size: 14px; font-weight: 600;
+  padding: 12px 22px; border-radius: 999px; box-shadow: var(--ombra-lg);
+  opacity: 0; transition: all .3s cubic-bezier(.2,.8,.3,1); z-index: 70; pointer-events: none;
+  display: flex; align-items: center; gap: 8px;
+}
+.toast.show { transform: translate(-50%, 0); opacity: 1; }
+
+/* ---- Back to top ---- */
+.back-top {
+  position: fixed; bottom: 24px; right: 24px; width: 46px; height: 46px;
+  border-radius: 50%; border: none; background: var(--bordeaux); color: var(--crema);
+  font-size: 20px; box-shadow: var(--ombra-lg); z-index: 35;
+  opacity: 0; pointer-events: none; transition: opacity .25s, transform .15s;
+}
+.back-top.show { opacity: 1; pointer-events: auto; }
+.back-top:hover { transform: translateY(-3px); }
+
+/* ---- Card hover affordance ---- */
+.winery-card { cursor: pointer; }
+.winery-card .w-actions .btn, .winery-card .w-actions a { cursor: pointer; }
+
+@media (max-width: 700px) {
+  .filterbar { position: static; }
+  .fb-label { min-width: 100%; }
+}

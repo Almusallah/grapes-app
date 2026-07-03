@@ -1,5 +1,7 @@
 // ============================================================================
 //  Grapes — frontend SPA (bilingue IT/EN)
+//  Filtri: regione · località · filosofia (naturale/biodinamica/biologica/
+//  eroica) · tipo. Modal cantina, toast, back-to-top.
 // ============================================================================
 const $ = (s, r = document) => r.querySelector(s);
 const api = (u, opts) => fetch(u, opts).then((r) => r.json());
@@ -9,9 +11,18 @@ let WINERIES = [];
 let WINES = [];
 let CART = JSON.parse(localStorage.getItem("grapes_cart") || "{}"); // {wineId: qty}
 let LANG = localStorage.getItem("grapes_lang") || "it";
-let filterWinery = null;
-let filterType = null;
 let lastShip = null;
+let drawerOpenedOnce = false;
+
+// Stato filtri unificato: agisce su cantine E vini.
+const F = { region: null, localita: null, practice: null, type: null, winery: null };
+
+const PRACTICES = [
+  { key: "naturale", emoji: "🍃" },
+  { key: "biodinamica", emoji: "☀️" },
+  { key: "biologica", emoji: "🌱" },
+  { key: "eroica", emoji: "⛰️" },
+];
 
 // ---- i18n -------------------------------------------------------------------
 const I18N = {
@@ -32,7 +43,7 @@ const I18N = {
   hero_cta1: { it: "Scopri le cantine", en: "Meet the wineries" },
   hero_cta2: { it: "Tutti i vini", en: "All wines" },
   badge1: { it: "🍷 Prezzo di cantina", en: "🍷 Cellar-door price" },
-  badge2: { it: "📦 Cartoni anti-urto", en: "📦 Shock-proof boxes" },
+  badge2: { it: "🍃 Naturale · biodinamico · eroico", en: "🍃 Natural · biodynamic · heroic" },
   badge3: { it: "🚚 Gratis sopra €89", en: "🚚 Free over €89" },
   float1_s: { it: "la più antica di Sardegna", en: "Sardinia's oldest winery" },
   float2_s: { it: "nove secoli di Chianti", en: "nine centuries of Chianti" },
@@ -40,9 +51,17 @@ const I18N = {
   stat2: { it: "etichette a catalogo", en: "labels listed" },
   stat3: { it: "passaggi intermedi", en: "middlemen" },
   stat4: { it: "l'anno della cantina più antica", en: "the oldest winery's founding year" },
+  fb_region: { it: "Regione", en: "Region" },
+  fb_localita: { it: "Località", en: "Place" },
+  fb_philosophy: { it: "Filosofia", en: "Philosophy" },
+  fb_type: { it: "Tipo", en: "Type" },
+  fb_reset: { it: "✕ Azzera filtri", en: "✕ Clear filters" },
+  fb_all: { it: "Tutte", en: "All" },
+  fb_all_loc: { it: "Tutte le località", en: "All places" },
+  fb_count: { it: "{c} cantine · {w} etichette", en: "{c} wineries · {w} labels" },
   win_kicker: { it: "Le cantine", en: "The wineries" },
   win_h2: { it: "Ogni bottiglia ha una storia", en: "Every bottle has a story" },
-  win_p: { it: "Famiglie, cooperative, castelli: leggi chi c'è dietro, poi assaggia.", en: "Families, co-operatives, castles: read who's behind it, then taste." },
+  win_p: { it: "Famiglie, cooperative, vigne eroiche: leggi chi c'è dietro, poi assaggia.", en: "Families, co-operatives, heroic vineyards: read who's behind it, then taste." },
   wine_kicker: { it: "La carta dei vini", en: "The wine list" },
   wine_h2: { it: "Compra diretto, paga il giusto", en: "Buy direct, pay what's fair" },
   wine_p: { it: "Prezzi di vendita diretta, come al banco della cantina.", en: "Direct-sale prices, just like at the cellar door." },
@@ -73,16 +92,16 @@ const I18N = {
     en: "© 2026 Grapes — demo prototype. Real wineries, stories and prices from official sites; simulated orders. Drink responsibly. 18+",
   },
   drawer_h2: { it: "La tua cassa", en: "Your case" },
-  // dynamic
   all: { it: "Tutte", en: "All" },
-  all_types: { it: "Tutti i tipi", en: "All types" },
   founded: { it: "dal", en: "since" },
   see_wines: { it: "Vedi i vini", en: "See the wines" },
   website: { it: "Sito ufficiale ↗", en: "Official site ↗" },
   labels: { it: "etichette", en: "labels" },
   add: { it: "+ Aggiungi", en: "+ Add" },
   est: { it: "prezzo di cantina indicativo", en: "indicative cellar-door price" },
-  none_found: { it: "Nessun vino trovato.", en: "No wines found." },
+  none_found: { it: "Nessun vino trovato con questi filtri.", en: "No wines match these filters." },
+  none_wineries: { it: "Nessuna cantina con questi filtri.", en: "No wineries match these filters." },
+  reset_hint: { it: "Azzera i filtri", en: "Clear filters" },
   empty_cart: { it: "La cassa è vuota 🍇", en: "Your case is empty 🍇" },
   bottles: { it: "bottiglie", en: "bottles" },
   cap_label: { it: "📍 CAP DI CONSEGNA", en: "📍 DELIVERY POSTCODE" },
@@ -96,10 +115,7 @@ const I18N = {
     en: "📦 Shock-proof 6-bottle boxes · delivery in {d} days{free}",
   },
   ship_free_part: { it: " · spedizione gratuita!", en: " · free shipping!" },
-  ship_missing: {
-    it: "Aggiungi {n} per la spedizione gratuita",
-    en: "Add {n} more for free shipping",
-  },
+  ship_missing: { it: "Aggiungi {n} per la spedizione gratuita", en: "Add {n} more for free shipping" },
   checkout_btn: { it: "Vai al checkout", en: "Go to checkout" },
   checkout: { it: "Checkout", en: "Checkout" },
   name_label: { it: "NOME E COGNOME", en: "FULL NAME" },
@@ -136,6 +152,12 @@ const I18N = {
   type_bollicine: { it: "Bollicine", en: "Sparkling" },
   type_meditazione: { it: "Da meditazione", en: "Meditation wine" },
   type_rosato: { it: "Rosato", en: "Rosé" },
+  prac_naturale: { it: "Naturale", en: "Natural" },
+  prac_biodinamica: { it: "Biodinamica", en: "Biodynamic" },
+  prac_biologica: { it: "Biologica", en: "Organic" },
+  prac_eroica: { it: "Eroica", en: "Heroic" },
+  toast_added: { it: "aggiunto alla cassa", en: "added to your case" },
+  wines_of: { it: "I vini di", en: "Wines from" },
 };
 const T = (k, vars) => {
   let s = (I18N[k] || {})[LANG] || (I18N[k] || {}).it || k;
@@ -144,6 +166,8 @@ const T = (k, vars) => {
 };
 const loc = (obj, field) => (LANG === "en" && obj[field + "_en"]) ? obj[field + "_en"] : (obj[field + "_it"] ?? obj[field]);
 const typeLabel = (t) => T("type_" + t);
+const pracLabel = (p) => T("prac_" + p);
+const pracEmoji = (p) => (PRACTICES.find((x) => x.key === p) || {}).emoji || "";
 
 function applyI18n() {
   document.documentElement.lang = LANG;
@@ -162,9 +186,7 @@ function setLang(l) {
   LANG = l;
   localStorage.setItem("grapes_lang", l);
   applyI18n();
-  renderWineries();
-  renderFilters();
-  renderWines();
+  renderAll();
   if ($("#drawer").classList.contains("open")) renderCart();
 }
 
@@ -174,74 +196,38 @@ async function init() {
   [WINERIES, WINES] = await Promise.all([api("/api/wineries"), api("/api/wines")]);
   $("#statWineries").textContent = WINERIES.length;
   $("#statWines").textContent = WINES.length;
-  renderWineries();
-  renderFilters();
-  renderWines();
+  const oldest = Math.min(...WINERIES.map((w) => w.founded));
+  const statY = $("#statsband, .statsband") ? document.querySelectorAll(".stat b")[3] : null;
+  if (statY) statY.textContent = oldest;
+  renderAll();
   renderCartBadge();
   wireUI();
 }
 
-// ---- Cantine --------------------------------------------------------------
-function renderWineries() {
-  $("#wineries").innerHTML = WINERIES.map(
-    (w) => `
-    <div class="winery-card">
-      <div class="w-photo">
-        <img src="${w.image}" alt="${w.name}" loading="lazy" />
-        <span class="w-founded">${T("founded")} ${w.founded}</span>
-        <span class="w-region">${w.region}</span>
-      </div>
-      <div class="w-body">
-        <h3>${w.name}</h3>
-        <div class="w-town">${w.town}</div>
-        <p class="w-story">${loc(w, "story")}</p>
-        <div class="w-actions">
-          <button class="btn" data-winery="${w.id}">${T("see_wines")}</button>
-          <a class="btn ghost" href="${w.website}" target="_blank" rel="noopener">${T("website")}</a>
-          <span class="count">${w.wines.length} ${T("labels")}</span>
-        </div>
-      </div>
-    </div>`
-  ).join("");
-  $("#wineries").querySelectorAll("[data-winery]").forEach((b) =>
-    b.addEventListener("click", () => {
-      filterWinery = b.dataset.winery;
-      filterType = null;
-      renderFilters();
-      renderWines();
-      document.querySelector("#vini").scrollIntoView({ behavior: "smooth" });
-    })
-  );
+function renderAll() {
+  renderFilterBar();
+  renderWineries();
+  renderWines();
 }
 
-// ---- Filtri + vini ----------------------------------------------------------
-function renderFilters() {
-  const types = [...new Set(WINES.map((w) => w.type))];
-  $("#filters").innerHTML =
-    `<button class="chip ${!filterWinery && !filterType ? "active" : ""}" data-f="all">${T("all")}</button>` +
-    WINERIES.map(
-      (w) => `<button class="chip ${filterWinery === w.id ? "active" : ""}" data-f="w:${w.id}">${w.name.split("—")[0].trim()}</button>`
-    ).join("") +
-    types.map(
-      (t) => `<button class="chip ${filterType === t ? "active" : ""}" data-f="t:${t}">${typeLabel(t)}</button>`
-    ).join("");
-  $("#filters").querySelectorAll(".chip").forEach((b) =>
-    b.addEventListener("click", () => {
-      const f = b.dataset.f;
-      if (f === "all") { filterWinery = null; filterType = null; }
-      else if (f.startsWith("w:")) { filterWinery = filterWinery === f.slice(2) ? null : f.slice(2); }
-      else if (f.startsWith("t:")) { filterType = filterType === t2(f) ? null : t2(f); }
-      renderFilters();
-      renderWines();
-    })
+// ---- Filtri ------------------------------------------------------------------
+function visibleWineries() {
+  return WINERIES.filter(
+    (w) =>
+      (!F.region || w.region === F.region) &&
+      (!F.localita || w.localita === F.localita) &&
+      (!F.practice || (w.practices || []).includes(F.practice))
   );
-  const t2 = (f) => f.slice(2);
 }
-
 function visibleWines() {
-  let out = WINES;
-  if (filterWinery) out = out.filter((w) => w.winery.id === filterWinery);
-  if (filterType) out = out.filter((w) => w.type === filterType);
+  let out = WINES.filter(
+    (w) =>
+      (!F.region || w.winery.region === F.region) &&
+      (!F.localita || w.winery.localita === F.localita) &&
+      (!F.practice || (w.winery.practices || []).includes(F.practice)) &&
+      (!F.type || w.type === F.type) &&
+      (!F.winery || w.winery.id === F.winery)
+  );
   const q = $("#searchInput").value.trim().toLowerCase();
   if (q)
     out = out.filter(
@@ -249,26 +235,207 @@ function visibleWines() {
         w.name.toLowerCase().includes(q) ||
         w.denom.toLowerCase().includes(q) ||
         w.winery.name.toLowerCase().includes(q) ||
-        w.winery.region.toLowerCase().includes(q)
+        w.winery.region.toLowerCase().includes(q) ||
+        (w.winery.localita || "").toLowerCase().includes(q)
     );
   return out;
 }
+function anyFilter() {
+  return F.region || F.localita || F.practice || F.type || F.winery;
+}
 
+function chip(label, active, dataset, extra = "") {
+  return `<button class="chip ${active ? "active" : ""} ${extra}" ${dataset}>${label}</button>`;
+}
+
+function renderFilterBar() {
+  // Regioni con conteggio cantine.
+  const regions = [...new Set(WINERIES.map((w) => w.region))].sort();
+  $("#fbRegions").innerHTML =
+    chip(T("fb_all"), !F.region, 'data-region=""') +
+    regions
+      .map((r) => {
+        const n = WINERIES.filter((w) => w.region === r).length;
+        return chip(`${r} <span class="n">${n}</span>`, F.region === r, `data-region="${r}"`);
+      })
+      .join("");
+
+  // Località della regione selezionata (o tutte).
+  const locs = [...new Set(
+    WINERIES.filter((w) => !F.region || w.region === F.region).map((w) => w.localita)
+  )].sort();
+  $("#fbLocalitas").innerHTML =
+    chip(T("fb_all_loc"), !F.localita, 'data-localita=""') +
+    locs.map((l) => chip(l, F.localita === l, `data-localita="${l}"`)).join("");
+
+  // Filosofie con conteggio.
+  $("#fbPractices").innerHTML = PRACTICES.map((p) => {
+    const n = WINERIES.filter((w) => (w.practices || []).includes(p.key)).length;
+    if (!n) return "";
+    const activeClass = { naturale: "active-nat", biodinamica: "active-bio", biologica: "active-org", eroica: "active-hero" }[p.key];
+    return chip(
+      `${p.emoji} ${pracLabel(p.key)} <span class="n">${n}</span>`,
+      false,
+      `data-practice="${p.key}"`,
+      "prac " + (F.practice === p.key ? activeClass : "")
+    );
+  }).join("");
+
+  // Tipi.
+  const types = [...new Set(WINES.map((w) => w.type))];
+  $("#fbTypes").innerHTML = types
+    .map((t) => chip(typeLabel(t), F.type === t, `data-type="${t}"`))
+    .join("");
+
+  // Conteggio + reset.
+  $("#fbCount").textContent = T("fb_count", { c: visibleWineries().length, w: visibleWines().length });
+  $("#fbReset").style.display = anyFilter() ? "" : "none";
+
+  // Wiring.
+  $("#fbRegions").querySelectorAll("[data-region]").forEach((b) =>
+    b.addEventListener("click", () => {
+      F.region = b.dataset.region || null;
+      F.localita = null; F.winery = null;
+      renderAll();
+    })
+  );
+  $("#fbLocalitas").querySelectorAll("[data-localita]").forEach((b) =>
+    b.addEventListener("click", () => {
+      F.localita = b.dataset.localita || null;
+      F.winery = null;
+      renderAll();
+    })
+  );
+  $("#fbPractices").querySelectorAll("[data-practice]").forEach((b) =>
+    b.addEventListener("click", () => {
+      F.practice = F.practice === b.dataset.practice ? null : b.dataset.practice;
+      F.winery = null;
+      renderAll();
+    })
+  );
+  $("#fbTypes").querySelectorAll("[data-type]").forEach((b) =>
+    b.addEventListener("click", () => {
+      F.type = F.type === b.dataset.type ? null : b.dataset.type;
+      renderAll();
+    })
+  );
+  $("#fbReset").onclick = () => {
+    F.region = F.localita = F.practice = F.type = F.winery = null;
+    renderAll();
+  };
+}
+
+function pracBadges(w, small = false) {
+  const ps = w.practices || [];
+  if (!ps.length) return "";
+  return `<div class="prac-badges">${ps
+    .map((p) => `<span class="prac-badge pb-${p}">${pracEmoji(p)} ${small ? "" : pracLabel(p)}</span>`)
+    .join("")}</div>`;
+}
+
+// ---- Cantine --------------------------------------------------------------
+function renderWineries() {
+  const list = visibleWineries();
+  if (!list.length) {
+    $("#wineries").innerHTML = `<div class="empty">${T("none_wineries")}<br/><button class="btn ghost" style="margin-top:10px" onclick="document.querySelector('#fbReset').click()">${T("reset_hint")}</button></div>`;
+    return;
+  }
+  $("#wineries").innerHTML = list
+    .map(
+      (w) => `
+    <div class="winery-card" data-open-winery="${w.id}">
+      <div class="w-photo">
+        <img src="${w.image}" alt="${w.name}" loading="lazy" />
+        <span class="w-founded">${T("founded")} ${w.founded}</span>
+        <span class="w-region">${w.region} · ${w.localita}</span>
+      </div>
+      <div class="w-body">
+        <h3>${w.name}</h3>
+        <div class="w-town">${w.town}</div>
+        ${pracBadges(w)}
+        <p class="w-story">${loc(w, "story")}</p>
+        <div class="w-actions">
+          <button class="btn" data-winery="${w.id}">${T("see_wines")}</button>
+          <a class="btn ghost" href="${w.website}" target="_blank" rel="noopener" data-stop>${T("website")}</a>
+          <span class="count">${w.wines.length} ${T("labels")}</span>
+        </div>
+      </div>
+    </div>`
+    )
+    .join("");
+  $("#wineries").querySelectorAll("[data-winery]").forEach((b) =>
+    b.addEventListener("click", (e) => {
+      e.stopPropagation();
+      F.winery = b.dataset.winery;
+      F.type = null;
+      renderAll();
+      document.querySelector("#vini").scrollIntoView({ behavior: "smooth" });
+    })
+  );
+  $("#wineries").querySelectorAll("[data-stop]").forEach((a) =>
+    a.addEventListener("click", (e) => e.stopPropagation())
+  );
+  $("#wineries").querySelectorAll("[data-open-winery]").forEach((c) =>
+    c.addEventListener("click", () => openWinery(c.dataset.openWinery))
+  );
+}
+
+// ---- Modal cantina -----------------------------------------------------------
+function openWinery(id) {
+  const w = WINERIES.find((x) => x.id === id);
+  if (!w) return;
+  showModal(`
+    <img class="wm-photo" src="${w.image}" alt="${w.name}" />
+    <div class="modal-body">
+      <h2 style="margin:0 0 2px;font-family:var(--serif);color:var(--bordeaux-ink)">${w.name}</h2>
+      <div class="wm-meta">
+        <span class="w-town" style="margin:0">${w.town} · ${w.region}</span>
+        <span class="w-founded" style="position:static">${T("founded")} ${w.founded}</span>
+      </div>
+      ${pracBadges(w)}
+      <p style="font-size:14px;color:var(--grigio);line-height:1.65">${loc(w, "story")}</p>
+      <a class="btn ghost" href="${w.website}" target="_blank" rel="noopener">${T("website")}</a>
+      <div class="wm-wines">
+        <h4 style="margin:0 0 4px;font-family:var(--serif)">${T("wines_of")} ${w.name.split("—")[0].trim()}</h4>
+        ${w.wines
+          .map(
+            (v) => `
+          <div class="wm-wine">
+            ${v.image ? `<img src="${v.image}" alt="" />` : `<span style="width:34px;text-align:center">🍷</span>`}
+            <div class="wmw-main">
+              <h5>${v.name}</h5>
+              <small>${v.denom} · ${v.format}</small>
+            </div>
+            <span class="price">${eur(v.price)}</span>
+            <button class="add" data-add="${v.id}">${T("add")}</button>
+          </div>`
+          )
+          .join("")}
+      </div>
+    </div>`);
+  $("#modal").querySelectorAll("[data-add]").forEach((b) =>
+    b.addEventListener("click", () => addToCart(b.dataset.add))
+  );
+}
+
+// ---- Vini ----------------------------------------------------------------
 function renderWines() {
   const list = visibleWines();
   if (!list.length) {
-    $("#wines").innerHTML = `<div class="empty">${T("none_found")}</div>`;
+    $("#wines").innerHTML = `<div class="empty">${T("none_found")}<br/><button class="btn ghost" style="margin-top:10px" onclick="document.querySelector('#fbReset').click()">${T("reset_hint")}</button></div>`;
     return;
   }
-  $("#wines").innerHTML = list.map(
-    (w) => `
+  $("#wines").innerHTML = list
+    .map(
+      (w) => `
     <div class="wine-card">
       <div class="bottle">
         <span class="type-pill type-${w.type}">${typeLabel(w.type)}</span>
-        <img src="${w.image}" alt="${w.name}" loading="lazy" />
+        ${w.image ? `<img src="${w.image}" alt="${w.name}" loading="lazy" />` : `<span style="font-size:56px">🍷</span>`}
+        ${pracBadges(w.winery, true)}
       </div>
       <div class="v-body">
-        <div class="v-winery">${w.winery.name} · ${w.winery.region}</div>
+        <div class="v-winery">${w.winery.name} · ${w.winery.localita}</div>
         <h3>${w.name}</h3>
         <div class="v-denom">${w.denom} · ${w.format}</div>
         <div class="price-row">
@@ -278,10 +445,21 @@ function renderWines() {
         ${w.price_estimated ? `<div class="est-note">* ${T("est")}</div>` : ""}
       </div>
     </div>`
-  ).join("");
+    )
+    .join("");
   $("#wines").querySelectorAll("[data-add]").forEach((b) =>
     b.addEventListener("click", () => addToCart(b.dataset.add))
   );
+}
+
+// ---- Toast ---------------------------------------------------------------
+let toastTimer;
+function toast(msg) {
+  const t = $("#toast");
+  t.innerHTML = msg;
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("show"), 2200);
 }
 
 // ---- Carrello ----------------------------------------------------------------
@@ -292,8 +470,15 @@ function saveCart() {
 function addToCart(id) {
   CART[id] = (CART[id] || 0) + 1;
   saveCart();
-  openDrawer();
-  renderCart();
+  const w = WINES.find((x) => x.id === id);
+  if (!drawerOpenedOnce) {
+    drawerOpenedOnce = true;
+    openDrawer();
+  } else if ($("#drawer").classList.contains("open")) {
+    renderCart();
+  } else {
+    toast(`🍷 <b>${w ? w.name : ""}</b> ${T("toast_added")}`);
+  }
 }
 function setQty(id, q) {
   if (q <= 0) delete CART[id];
@@ -325,10 +510,11 @@ async function renderCart() {
     foot.innerHTML = "";
     return;
   }
-  body.innerHTML = lines.map(
-    ({ w, qty }) => `
+  body.innerHTML = lines
+    .map(
+      ({ w, qty }) => `
     <div class="cart-item">
-      <div class="ci-img"><img src="${w.image}" alt="" /></div>
+      <div class="ci-img">${w.image ? `<img src="${w.image}" alt="" />` : "🍷"}</div>
       <div class="ci-main">
         <h4>${w.name}</h4>
         <small>${w.winery.name} · ${w.denom}</small>
@@ -340,7 +526,8 @@ async function renderCart() {
         </div>
       </div>
     </div>`
-  ).join("");
+    )
+    .join("");
   body.querySelectorAll("[data-inc]").forEach((b) =>
     b.addEventListener("click", () => setQty(b.dataset.inc, CART[b.dataset.inc] + 1))
   );
@@ -494,6 +681,11 @@ function wireUI() {
   $("#langBtn").addEventListener("click", () => setLang(LANG === "it" ? "en" : "it"));
   let t;
   $("#searchInput").addEventListener("input", () => { clearTimeout(t); t = setTimeout(renderWines, 250); });
+  const bt = $("#backTop");
+  window.addEventListener("scroll", () => {
+    bt.classList.toggle("show", window.scrollY > 900);
+  }, { passive: true });
+  bt.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
 }
 
 init();

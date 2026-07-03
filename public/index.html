@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Grapes — Dalla cantina alla tavola</title>
   <meta name="description" content="Grapes è il marketplace della vendita diretta: la storia di ogni cantina italiana in breve, e i suoi vini a casa tua senza passaggi intermedi." />
+  <meta name="referrer" content="no-referrer" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -70,11 +71,34 @@
   </section>
 
   <main>
+    <section id="esplora">
+      <div class="filterbar" id="filterbar">
+        <div class="fb-row">
+          <span class="fb-label" data-i18n="fb_region">Regione</span>
+          <div class="fb-chips" id="fbRegions"></div>
+        </div>
+        <div class="fb-row">
+          <span class="fb-label" data-i18n="fb_localita">Località</span>
+          <div class="fb-chips" id="fbLocalitas"></div>
+        </div>
+        <div class="fb-row">
+          <span class="fb-label" data-i18n="fb_philosophy">Filosofia</span>
+          <div class="fb-chips" id="fbPractices"></div>
+          <span class="fb-label" style="margin-left:14px" data-i18n="fb_type">Tipo</span>
+          <div class="fb-chips" id="fbTypes"></div>
+        </div>
+        <div class="fb-row fb-status">
+          <span id="fbCount" class="fb-count"></span>
+          <button class="fb-reset" id="fbReset" style="display:none" data-i18n="fb_reset">✕ Azzera filtri</button>
+        </div>
+      </div>
+    </section>
+
     <section id="cantine">
       <div class="section-head">
         <div class="section-kicker" data-i18n="win_kicker">Le cantine</div>
         <h2 data-i18n="win_h2">Ogni bottiglia ha una storia</h2>
-        <p data-i18n="win_p">Famiglie, cooperative, castelli: leggi chi c'è dietro, poi assaggia.</p>
+        <p data-i18n="win_p">Famiglie, cooperative, vigne eroiche: leggi chi c'è dietro, poi assaggia.</p>
       </div>
       <div class="wineries-grid" id="wineries"></div>
     </section>
@@ -85,7 +109,6 @@
         <h2 data-i18n="wine_h2">Compra diretto, paga il giusto</h2>
         <p data-i18n="wine_p">Prezzi di vendita diretta, come al banco della cantina.</p>
       </div>
-      <div class="filters" id="filters"></div>
       <div class="wines-grid" id="wines"></div>
     </section>
 
@@ -159,6 +182,9 @@
   <div class="modal-bg" id="modalBg">
     <div class="modal" id="modal"></div>
   </div>
+
+  <div class="toast" id="toast"></div>
+  <button class="back-top" id="backTop" title="Torna su">↑</button>
 
   <script src="/app.js"></script>
 </body>
