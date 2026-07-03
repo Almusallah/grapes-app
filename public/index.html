@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Grapes — Dalla cantina alla tavola</title>
+  <meta name="description" content="Grapes è il marketplace della vendita diretta: la storia di ogni cantina italiana in breve, e i suoi vini a casa tua senza passaggi intermedi." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+
+  <div class="announce" data-i18n="announce">Vendita diretta dalle cantine · Spedizione gratuita sopra €89 · Solo maggiorenni 18+</div>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="/">
+        <span class="brand-mark">🍇</span>
+        <span class="brand-text">Grapes<small data-i18n="brand_sub">dalla cantina alla tavola</small></span>
+      </a>
+      <div class="search">
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="searchInput" type="text" data-i18n-ph="search_ph" placeholder="Cerca vini, cantine, denominazioni…" />
+      </div>
+      <nav class="nav-actions">
+        <button class="btn ghost" id="langBtn" title="Switch language">EN</button>
+        <button class="btn ghost" id="joinBtn" data-i18n="join_btn">Sei una cantina?</button>
+        <button class="btn cart-btn" id="cartBtn">
+          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M6 7h12l-1.2 11a2 2 0 0 1-2 1.8H9.2a2 2 0 0 1-2-1.8Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>
+          <span data-i18n="cart">Carrello</span>
+          <span class="cart-badge" id="cartBadge" style="display:none">0</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-copy">
+        <div class="hero-eyebrow" data-i18n="hero_eyebrow">Vendita diretta · cantine italiane vere</div>
+        <h1 data-i18n="hero_h1">Dalla cantina <em>alla tua tavola.</em></h1>
+        <p data-i18n="hero_p">Le piccole e medie cantine italiane fanno troppi passaggi per arrivare a te — e tu troppi viaggi per scoprirle. Su Grapes leggi la storia di ogni cantina in un minuto e compri i suoi vini <b>direttamente</b>, al prezzo di cantina.</p>
+        <div class="hero-cta">
+          <a href="#cantine" class="btn gold big" data-i18n="hero_cta1">Scopri le cantine</a>
+          <a href="#vini" class="btn outline big" data-i18n="hero_cta2">Tutti i vini</a>
+        </div>
+        <div class="hero-badges">
+          <span data-i18n="badge1">🍷 Prezzo di cantina</span>
+          <span data-i18n="badge2">📦 Cartoni anti-urto</span>
+          <span data-i18n="badge3">🚚 Gratis sopra €89</span>
+        </div>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <img class="photo" src="https://vinicontini.com/wp-content/uploads/2023/05/Cantina-Bottaia-Sardegna-Contini1898-uai-1854x1236.jpg" alt="Bottaia Contini 1898, Cabras" loading="eager" />
+        <div class="float-card fc-1"><span>🍷</span><div><b>Contini 1898</b><small data-i18n="float1_s">la più antica di Sardegna</small></div></div>
+        <div class="float-card fc-2"><span>🏰</span><div><b>Ricasoli 1141</b><small data-i18n="float2_s">nove secoli di Chianti</small></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="statsband">
+    <div class="statsband-inner">
+      <div class="stat"><b id="statWineries">–</b><span data-i18n="stat1">cantine fondatrici</span></div>
+      <div class="stat"><b id="statWines">–</b><span data-i18n="stat2">etichette a catalogo</span></div>
+      <div class="stat"><b>0</b><span data-i18n="stat3">passaggi intermedi</span></div>
+      <div class="stat"><b>1141</b><span data-i18n="stat4">l'anno della cantina più antica</span></div>
+    </div>
+  </section>
+
+  <main>
+    <section id="cantine">
+      <div class="section-head">
+        <div class="section-kicker" data-i18n="win_kicker">Le cantine</div>
+        <h2 data-i18n="win_h2">Ogni bottiglia ha una storia</h2>
+        <p data-i18n="win_p">Famiglie, cooperative, castelli: leggi chi c'è dietro, poi assaggia.</p>
+      </div>
+      <div class="wineries-grid" id="wineries"></div>
+    </section>
+
+    <section id="vini">
+      <div class="section-head">
+        <div class="section-kicker" data-i18n="wine_kicker">La carta dei vini</div>
+        <h2 data-i18n="wine_h2">Compra diretto, paga il giusto</h2>
+        <p data-i18n="wine_p">Prezzi di vendita diretta, come al banco della cantina.</p>
+      </div>
+      <div class="filters" id="filters"></div>
+      <div class="wines-grid" id="wines"></div>
+    </section>
+
+    <section class="how">
+      <div class="section-head">
+        <div class="section-kicker" data-i18n="how_kicker">Come funziona</div>
+        <h2 data-i18n="how_h2">Meno passaggi, più valore a chi produce</h2>
+        <p data-i18n="how_p">La filiera classica del vino ha 3–4 intermediari. Grapes ne ha zero.</p>
+      </div>
+      <div class="how-grid">
+        <div class="how-card">
+          <div class="how-ico">📖</div>
+          <h3 data-i18n="how1_t">Leggi la storia</h3>
+          <p data-i18n="how1_p">Un minuto per capire chi produce: la famiglia, il territorio, i vitigni. Niente schede anonime da scaffale.</p>
+        </div>
+        <div class="how-card">
+          <div class="how-ico">🍷</div>
+          <h3 data-i18n="how2_t">Compra diretto</h3>
+          <p data-i18n="how2_p">Il prezzo è quello della vendita in cantina. Alla cantina va molto di più di quanto le lascerebbe la distribuzione.</p>
+        </div>
+        <div class="how-card">
+          <div class="how-ico">📦</div>
+          <h3 data-i18n="how3_t">Ricevi a casa</h3>
+          <p data-i18n="how3_p">Cartoni anti-urto da 6, corriere convenzionato, gratis sopra €89. In 2 giorni (4 per le isole).</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="join-banner">
+      <div>
+        <div class="section-kicker" data-i18n="jb_kicker">Per le cantine</div>
+        <h2 data-i18n="jb_h2">Porta la tua cantina su Grapes</h2>
+        <p data-i18n="jb_p">Racconta la tua storia, carica le etichette, decidi tu il prezzo. Noi portiamo il cliente alla tua porta — senza che tu debba costruire un e-commerce, gestire la logistica o cedere margine alla distribuzione.</p>
+      </div>
+      <button class="btn big" id="joinBtn2" data-i18n="jb_btn">Candida la tua cantina →</button>
+    </section>
+  </main>
+
+  <footer>
+    <div class="foot-inner">
+      <div class="foot-col brandcol">
+        <div class="brand"><span class="brand-mark">🍇</span><span class="brand-text" style="color:var(--crema)">Grapes</span></div>
+        <p data-i18n="foot_p">Il marketplace della vendita diretta: storie vere, prezzi di cantina, zero passaggi intermedi.</p>
+      </div>
+      <div class="foot-col">
+        <h4 data-i18n="foot_buy">Comprare</h4>
+        <a href="#cantine" data-i18n="foot_buy1">Le cantine</a><a href="#vini" data-i18n="foot_buy2">I vini</a><a href="#" data-i18n="foot_buy3">Spedizioni</a>
+      </div>
+      <div class="foot-col">
+        <h4 data-i18n="foot_sell">Per le cantine</h4>
+        <a href="#" data-i18n="foot_sell1">Candidati</a><a href="#" data-i18n="foot_sell2">Commissioni</a><a href="#" data-i18n="foot_sell3">Logistica</a>
+      </div>
+      <div class="foot-col">
+        <h4>Grapes</h4>
+        <a href="#" data-i18n="foot_co1">Chi siamo</a><a href="#" data-i18n="foot_co2">Contatti</a><a href="#" data-i18n="foot_co3">Investitori</a>
+      </div>
+    </div>
+    <div class="foot-base" data-i18n="foot_base">© 2026 Grapes — prototipo dimostrativo. Cantine, storie e prezzi reali dai siti ufficiali; ordini simulati. Bevi responsabilmente. 18+</div>
+  </footer>
+
+  <div class="overlay" id="overlay"></div>
+  <aside class="drawer" id="drawer">
+    <div class="drawer-head">
+      <h2 data-i18n="drawer_h2">La tua cassa</h2>
+      <button class="close-x" id="closeDrawer">×</button>
+    </div>
+    <div class="drawer-body" id="cartBody"></div>
+    <div class="drawer-foot" id="cartFoot"></div>
+  </aside>
+
+  <div class="modal-bg" id="modalBg">
+    <div class="modal" id="modal"></div>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>

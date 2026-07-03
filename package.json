@@ -1,0 +1,17 @@
+{
+  "name": "grapes",
+  "version": "0.1.0",
+  "description": "Grapes — dal produttore alla tavola: il marketplace della vendita diretta delle cantine italiane. From cellar door to your table.",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
