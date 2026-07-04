@@ -11,6 +11,8 @@ export const WINERIES = [
     town: "Sanluri",
     region: "Sardegna",
     localita: "Sanluri",
+    lat: 39.5619,
+    lng: 8.8996,
     practices: [],
     founded: 2014,
     story_it:
@@ -68,6 +70,8 @@ export const WINERIES = [
     town: "Dolianova",
     region: "Sardegna",
     localita: "Dolianova",
+    lat: 39.3768,
+    lng: 9.1283,
     practices: [],
     founded: 1949,
     story_it:
@@ -125,6 +129,8 @@ export const WINERIES = [
     town: "Cabras (Oristano)",
     region: "Sardegna",
     localita: "Cabras",
+    lat: 39.9283,
+    lng: 8.5323,
     practices: [],
     founded: 1898,
     story_it:
@@ -183,6 +189,8 @@ export const WINERIES = [
     town: "Monserrato (Cagliari)",
     region: "Sardegna",
     localita: "Monserrato",
+    lat: 39.2567,
+    lng: 9.144,
     practices: [],
     founded: 1924,
     story_it:
@@ -231,6 +239,8 @@ export const WINERIES = [
     town: "Bardolino (Verona)",
     region: "Veneto",
     localita: "Bardolino",
+    lat: 45.5464,
+    lng: 10.7218,
     practices: [],
     founded: 1678,
     story_it:
@@ -284,6 +294,8 @@ export const WINERIES = [
     town: "Sclafani Bagni (Palermo)",
     region: "Sicilia",
     localita: "Sclafani Bagni",
+    lat: 37.8228,
+    lng: 13.8451,
     practices: [],
     founded: 1830,
     story_it:
@@ -337,6 +349,8 @@ export const WINERIES = [
     town: "Gaiole in Chianti (Siena)",
     region: "Toscana",
     localita: "Gaiole in Chianti",
+    lat: 43.4669,
+    lng: 11.4344,
     practices: [],
     founded: 1141,
     story_it:
@@ -390,6 +404,8 @@ export const WINERIES = [
     town: "Cazzago San Martino (BS)",
     region: "Lombardia",
     localita: "Cazzago San Martino",
+    lat: 45.581,
+    lng: 10.0244,
     practices: ["biodinamica", "biologica"],
     founded: 2012,
     story_it:
@@ -443,6 +459,8 @@ export const WINERIES = [
     town: "Provaglio d'Iseo (BS)",
     region: "Lombardia",
     localita: "Provaglio d'Iseo",
+    lat: 45.6363,
+    lng: 10.043,
     practices: ["biologica"],
     founded: 1870,
     story_it:
@@ -500,6 +518,8 @@ export const WINERIES = [
     town: "Sondrio, Valtellina",
     region: "Lombardia",
     localita: "Sondrio",
+    lat: 46.1699,
+    lng: 9.8788,
     practices: ["eroica"],
     founded: 1984,
     story_it:
@@ -557,6 +577,8 @@ export const WINERIES = [
     town: "Riomaggiore, Cinque Terre",
     region: "Liguria",
     localita: "Riomaggiore",
+    lat: 44.0997,
+    lng: 9.7376,
     practices: ["eroica", "naturale", "biologica"],
     founded: 2004,
     story_it:
@@ -614,6 +636,8 @@ export const WINERIES = [
     town: "Morgex (Aosta)",
     region: "Valle d'Aosta",
     localita: "Morgex",
+    lat: 45.7549,
+    lng: 7.0405,
     practices: ["eroica"],
     founded: 1983,
     story_it:
@@ -667,6 +691,8 @@ export const WINERIES = [
     town: "Sennori (Sassari)",
     region: "Sardegna",
     localita: "Sennori",
+    lat: 40.7893,
+    lng: 8.5925,
     practices: ["naturale", "biodinamica"],
     founded: 2000,
     story_it:
@@ -720,6 +746,8 @@ export const WINERIES = [
     town: "Mamoiada (Nuoro)",
     region: "Sardegna",
     localita: "Mamoiada",
+    lat: 40.2136,
+    lng: 9.2834,
     practices: ["biologica", "eroica"],
     founded: 2000,
     story_it:
@@ -777,6 +805,8 @@ export const WINERIES = [
     town: "Dorgali (Nuoro)",
     region: "Sardegna",
     localita: "Dorgali",
+    lat: 40.2915,
+    lng: 9.5901,
     practices: ["biologica"],
     founded: 2007,
     story_it:
@@ -830,6 +860,8 @@ export const WINERIES = [
     town: "Saturnia, Manciano (Grosseto)",
     region: "Toscana",
     localita: "Manciano",
+    lat: 42.6027,
+    lng: 11.5083,
     practices: ["naturale", "biodinamica", "biologica"],
     founded: 2005,
     story_it:
@@ -883,6 +915,8 @@ export const WINERIES = [
     town: "Montalcino (Siena)",
     region: "Toscana",
     localita: "Montalcino",
+    lat: 43.009,
+    lng: 11.5232,
     practices: ["biodinamica", "biologica"],
     founded: 1992,
     story_it:

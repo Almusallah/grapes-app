@@ -64,6 +64,20 @@ app.get("/api/regions", (_req, res) =>
   res.json([...new Set(WINERIES.map((w) => w.region))].sort())
 );
 
+// Luoghi per la mappa: cantine con coordinate + riepilogo vini.
+app.get("/api/places", (_req, res) =>
+  res.json(
+    WINERIES.filter((w) => w.lat && w.lng).map((w) => ({
+      id: w.id, name: w.name, town: w.town, region: w.region,
+      localita: w.localita, practices: w.practices || [], founded: w.founded,
+      lat: w.lat, lng: w.lng, image: w.image, website: w.website,
+      story_it: w.story_it, story_en: w.story_en,
+      wines: w.wines.length,
+      priceFrom: Math.min(...w.wines.map((v) => v.price)),
+    }))
+  )
+);
+
 // Facce filtro: regioni, località e pratiche con conteggi.
 app.get("/api/facets", (_req, res) => {
   const count = (arr) =>

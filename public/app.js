@@ -59,6 +59,8 @@ const I18N = {
   fb_all: { it: "Tutte", en: "All" },
   fb_all_loc: { it: "Tutte le località", en: "All places" },
   fb_count: { it: "{c} cantine · {w} etichette", en: "{c} wineries · {w} labels" },
+  nav_map: { it: "🗺️ Mappa", en: "🗺️ Map" },
+  see_on_map: { it: "🗺️ Vedi sulla mappa", en: "🗺️ See on the map" },
   win_kicker: { it: "Le cantine", en: "The wineries" },
   win_h2: { it: "Ogni bottiglia ha una storia", en: "Every bottle has a story" },
   win_p: { it: "Famiglie, cooperative, vigne eroiche: leggi chi c'è dietro, poi assaggia.", en: "Families, co-operatives, heroic vineyards: read who's behind it, then taste." },
@@ -194,6 +196,11 @@ function setLang(l) {
 async function init() {
   applyI18n();
   [WINERIES, WINES] = await Promise.all([api("/api/wineries"), api("/api/wines")]);
+  const deepWinery = new URLSearchParams(location.search).get("winery");
+  if (deepWinery && WINERIES.find((w) => w.id === deepWinery)) {
+    F.winery = deepWinery;
+    setTimeout(() => document.querySelector("#vini")?.scrollIntoView({ behavior: "smooth" }), 900);
+  }
   $("#statWineries").textContent = WINERIES.length;
   $("#statWines").textContent = WINES.length;
   const oldest = Math.min(...WINERIES.map((w) => w.founded));
@@ -395,6 +402,7 @@ function openWinery(id) {
       ${pracBadges(w)}
       <p style="font-size:14px;color:var(--grigio);line-height:1.65">${loc(w, "story")}</p>
       <a class="btn ghost" href="${w.website}" target="_blank" rel="noopener">${T("website")}</a>
+      <a class="btn ghost" href="/mappa.html?focus=${w.id}">${T("see_on_map")}</a>
       <div class="wm-wines">
         <h4 style="margin:0 0 4px;font-family:var(--serif)">${T("wines_of")} ${w.name.split("—")[0].trim()}</h4>
         ${w.wines
