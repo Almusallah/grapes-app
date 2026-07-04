@@ -27,6 +27,12 @@ const I18N = {
   prac_biodinamica: { it: "Biodinamica", en: "Biodynamic" },
   prac_biologica: { it: "Biologica", en: "Organic" },
   prac_eroica: { it: "Eroica", en: "Heroic" },
+  growers_chip: { it: "🍇 Registro vignaioli", en: "🍇 Growers registry" },
+  count_g: { it: "{n} cantine in vendita · {g} vignaioli censiti · {r} regioni", en: "{n} wineries on sale · {g} growers indexed · {r} regions" },
+  g_note: { it: "Profilo completo e vendita diretta in arrivo.", en: "Full profile and direct sales coming soon." },
+  g_source: { it: "Fonte", en: "Source" },
+  g_claim: { it: "Sei questa cantina? Candidati →", en: "Is this your winery? Apply →" },
+  sources_note: { it: "Registro indipendente · fonti: elenchi soci pubblici VinNatur e ViniVeri", en: "Independent registry · sources: public member rosters of VinNatur and ViniVeri" },
 };
 const T = (k, vars) => {
   let s = (I18N[k] || {})[LANG] || (I18N[k] || {}).it || k;
@@ -40,8 +46,10 @@ const PRACTICES = [
 const pracEmoji = (p) => (PRACTICES.find((x) => x.key === p) || {}).emoji || "";
 
 let PLACES = [];
+let GROWERS = [];
 let markers = {};
-let F = { region: null, practice: null };
+let growerLayer = null;
+let F = { region: null, practice: null, growers: true };
 
 // ---- Mappa -------------------------------------------------------------------
 const map = L.map("map", { zoomControl: true, attributionControl: true })
@@ -100,11 +108,12 @@ function visible() {
 }
 
 function renderFilters() {
-  const regions = [...new Set(PLACES.map((p) => p.region))].sort();
+  const regions = [...new Set([...PLACES.map((p) => p.region), ...GROWERS.map((g) => g.region)])].sort();
   const chips = [
     `<button class="chip ${!F.region && !F.practice ? "active" : ""}" data-f="all">${T("all")}</button>`,
     ...regions.map((r) =>
       `<button class="chip ${F.region === r ? "active" : ""}" data-f="r:${r}">${r}</button>`),
+    `<button class="chip ${F.growers ? "active" : ""}" data-f="g" style="${F.growers ? "background:#5a4a6b;border-color:#5a4a6b;color:#fff" : ""}">${T("growers_chip")} <span class="n">${GROWERS.length}</span></button>`,
     ...PRACTICES.filter((p) => PLACES.some((x) => (x.practices || []).includes(p.key))).map((p) =>
       `<button class="chip prac ${F.practice === p.key ? "active" : ""}" data-f="p:${p.key}" style="${F.practice === p.key ? "background:var(--bordeaux);border-color:var(--bordeaux);color:#fff" : ""}">${p.emoji} ${T("prac_" + p.key)}</button>`),
   ];
@@ -113,6 +122,7 @@ function renderFilters() {
     b.addEventListener("click", () => {
       const f = b.dataset.f;
       if (f === "all") { F.region = null; F.practice = null; }
+      else if (f === "g") F.growers = !F.growers;
       else if (f.startsWith("r:")) F.region = F.region === f.slice(2) ? null : f.slice(2);
       else F.practice = F.practice === f.slice(2) ? null : f.slice(2);
       renderAll();
@@ -122,7 +132,8 @@ function renderFilters() {
 
 function renderList() {
   const list = visible();
-  $("#msCount").textContent = T("count", { n: list.length, r: new Set(list.map((p) => p.region)).size });
+  const gs = visibleGrowers();
+  $("#msCount").textContent = T("count_g", { n: list.length, g: gs.length, r: new Set([...list.map((p) => p.region), ...gs.map((g) => g.region)]).size });
   $("#msList").innerHTML = list
     .map(
       (p) => `
@@ -142,6 +153,25 @@ function renderList() {
   );
 }
 
+function visibleGrowers() {
+  if (!F.growers) return [];
+  if (F.practice && F.practice !== "naturale") return [];
+  return GROWERS.filter((g) => !F.region || g.region === F.region);
+}
+
+function growerPopup(g) {
+  const site = g.website ? `<a class="btn ghost" href="${g.website}" target="_blank" rel="noopener">${T("site")}</a>` : "";
+  return `<div class="pp"><div class="pp-body">
+    <h3>${g.name}</h3>
+    <div class="pp-meta">${g.comune}${g.provincia ? " (" + g.provincia + ")" : ""} · ${g.region}</div>
+    <div class="pp-story">${T("g_note")}<br/><small>${T("g_source")}: ${g.sources.join(", ")}</small></div>
+    <div class="pp-cta">
+      <a class="btn" style="background:#5a4a6b;color:#fff" href="/#cantine">${T("g_claim")}</a>
+      ${site}
+    </div>
+  </div></div>`;
+}
+
 function renderMarkers() {
   Object.values(markers).forEach((m) => map.removeLayer(m));
   markers = {};
@@ -152,11 +182,21 @@ function renderMarkers() {
     m.on("click", () => highlight(p.id));
     markers[p.id] = m;
   });
-  const list = visible();
-  if (list.length) {
-    const b = L.latLngBounds(list.map((p) => [p.lat, p.lng]));
-    map.fitBounds(b.pad(0.12));
+  if (growerLayer) { map.removeLayer(growerLayer); growerLayer = null; }
+  const gs = visibleGrowers();
+  if (gs.length) {
+    growerLayer = L.layerGroup(
+      gs.map((g) =>
+        L.circleMarker([g.lat, g.lng], {
+          radius: 5.5, color: "#5a4a6b", weight: 1.5,
+          fillColor: "#8a76a8", fillOpacity: 0.75,
+        }).bindPopup(growerPopup(g))
+      )
+    ).addTo(map);
   }
+  const list = visible();
+  const pts = [...list.map((p) => [p.lat, p.lng]), ...gs.map((g) => [g.lat, g.lng])];
+  if (pts.length) map.fitBounds(L.latLngBounds(pts).pad(0.1));
 }
 
 function highlight(id) {
@@ -197,8 +237,9 @@ $("#langBtn").addEventListener("click", () => {
   renderAll();
 });
 
-api("/api/places").then((d) => {
+Promise.all([api("/api/places"), api("/api/growers")]).then(([d, g]) => {
   PLACES = d;
+  GROWERS = g;
   renderAll();
   // deep-link: /mappa.html?focus=<id>
   const focus = new URLSearchParams(location.search).get("focus");

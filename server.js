@@ -6,6 +6,7 @@ import { readFileSync, writeFileSync, existsSync, mkdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { WINERIES } from "./src/wineries.js";
+import { GROWERS } from "./src/growers.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -77,6 +78,9 @@ app.get("/api/places", (_req, res) =>
     }))
   )
 );
+
+// Registro indipendente dei vignaioli naturali (fonti associative pubbliche).
+app.get("/api/growers", (_req, res) => res.json(GROWERS));
 
 // Facce filtro: regioni, località e pratiche con conteggi.
 app.get("/api/facets", (_req, res) => {
