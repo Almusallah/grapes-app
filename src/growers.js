@@ -1635,6 +1635,18 @@ export const GROWERS = [
   "lng": 9.1127
  },
  {
+  "name": "Cantina Fradiles",
+  "comune": "Atzara",
+  "provincia": "NU",
+  "region": "Sardegna",
+  "website": "https://www.fradiles.it",
+  "sources": [
+   "registro indipendente Sardegna (siti ufficiali e associazioni)"
+  ],
+  "lat": 39.9923,
+  "lng": 9.0757
+ },
+ {
   "name": "paleos vini",
   "comune": "Badesi",
   "provincia": "",
@@ -1645,6 +1657,114 @@ export const GROWERS = [
   ],
   "lat": 40.9651,
   "lng": 8.8842
+ },
+ {
+  "name": "Enrico Esu",
+  "comune": "Carbonia",
+  "provincia": "SU",
+  "region": "Sardegna",
+  "website": "https://www.nerominiera.it",
+  "sources": [
+   "registro indipendente Sardegna (siti ufficiali e associazioni)"
+  ],
+  "lat": 39.1653,
+  "lng": 8.5278
+ },
+ {
+  "name": "Cardedu",
+  "comune": "Cardedu",
+  "provincia": "NU",
+  "region": "Sardegna",
+  "website": "",
+  "sources": [
+   "registro indipendente Sardegna (siti ufficiali e associazioni)"
+  ],
+  "lat": 39.7972,
+  "lng": 9.6247
+ },
+ {
+  "name": "Sa Defenza",
+  "comune": "Donori",
+  "provincia": "SU",
+  "region": "Sardegna",
+  "website": "",
+  "sources": [
+   "registro indipendente Sardegna (siti ufficiali e associazioni)"
+  ],
+  "lat": 39.4318,
+  "lng": 9.1272
+ },
+ {
+  "name": "Azienda Agricola Pusole",
+  "comune": "Lotzorai",
+  "provincia": "NU",
+  "region": "Sardegna",
+  "website": "",
+  "sources": [
+   "registro indipendente Sardegna (siti ufficiali e associazioni)"
+  ],
+  "lat": 39.9692,
+  "lng": 9.6637
+ },
+ {
+  "name": "Cantina Canneddu",
+  "comune": "Mamoiada",
+  "provincia": "NU",
+  "region": "Sardegna",
+  "website": "",
+  "sources": [
+   "registro indipendente Sardegna (siti ufficiali e associazioni)"
+  ],
+  "lat": 40.2157,
+  "lng": 9.2804
+ },
+ {
+  "name": "Cantina Francesco Cadinu",
+  "comune": "Mamoiada",
+  "provincia": "NU",
+  "region": "Sardegna",
+  "website": "https://francescocadinu.it",
+  "sources": [
+   "registro indipendente Sardegna (siti ufficiali e associazioni)"
+  ],
+  "lat": 40.2157,
+  "lng": 9.2804
+ },
+ {
+  "name": "Cantina Montisci Vitzizzai",
+  "comune": "Mamoiada",
+  "provincia": "NU",
+  "region": "Sardegna",
+  "website": "",
+  "sources": [
+   "registro indipendente Sardegna (siti ufficiali e associazioni)"
+  ],
+  "lat": 40.2157,
+  "lng": 9.2804
+ },
+ {
+  "name": "Giovanni Montisci",
+  "comune": "Mamoiada",
+  "provincia": "NU",
+  "region": "Sardegna",
+  "website": "",
+  "sources": [
+   "registro indipendente Sardegna (siti ufficiali e associazioni)"
+  ],
+  "lat": 40.2157,
+  "lng": 9.2804
+ },
+ {
+  "name": "Luca Gungui",
+  "comune": "Mamoiada",
+  "provincia": "NU",
+  "region": "Sardegna",
+  "website": "https://www.lucagungui.it",
+  "sources": [
+   "registro indipendente Sardegna (siti ufficiali e associazioni)"
+  ],
+  "lat": 40.2157,
+  "lng": 9.2804
  },
  {
   "name": "Pasquale Bonamici",
@@ -1671,6 +1791,42 @@ export const GROWERS = [
   "lng": 9.2804
  },
  {
+  "name": "Teularju",
+  "comune": "Mamoiada",
+  "provincia": "NU",
+  "region": "Sardegna",
+  "website": "",
+  "sources": [
+   "registro indipendente Sardegna (siti ufficiali e associazioni)"
+  ],
+  "lat": 40.2157,
+  "lng": 9.2804
+ },
+ {
+  "name": "Vike Vike",
+  "comune": "Mamoiada",
+  "provincia": "NU",
+  "region": "Sardegna",
+  "website": "",
+  "sources": [
+   "registro indipendente Sardegna (siti ufficiali e associazioni)"
+  ],
+  "lat": 40.2157,
+  "lng": 9.2804
+ },
+ {
+  "name": "Bentu Luna",
+  "comune": "Neoneli",
+  "provincia": "OR",
+  "region": "Sardegna",
+  "website": "https://bentuluna.it",
+  "sources": [
+   "registro indipendente Sardegna (siti ufficiali e associazioni)"
+  ],
+  "lat": 40.0648,
+  "lng": 8.9467
+ },
+ {
   "name": "Panevino",
   "comune": "Nurri",
   "provincia": "CA",
@@ -1681,6 +1837,42 @@ export const GROWERS = [
   ],
   "lat": 39.712,
   "lng": 9.2298
+ },
+ {
+  "name": "Cantina Orgosa",
+  "comune": "Orgosolo",
+  "provincia": "NU",
+  "region": "Sardegna",
+  "website": "",
+  "sources": [
+   "registro indipendente Sardegna (siti ufficiali e associazioni)"
+  ],
+  "lat": 40.2048,
+  "lng": 9.3549
+ },
+ {
+  "name": "Altea Illotto",
+  "comune": "Serdiana",
+  "provincia": "SU",
+  "region": "Sardegna",
+  "website": "http://www.alteaillotto.com",
+  "sources": [
+   "registro indipendente Sardegna (siti ufficiali e associazioni)"
+  ],
+  "lat": 39.3742,
+  "lng": 9.1589
+ },
+ {
+  "name": "Famiglia Orro",
+  "comune": "Tramatza",
+  "provincia": "OR",
+  "region": "Sardegna",
+  "website": "https://www.famigliaorro.it",
+  "sources": [
+   "registro indipendente Sardegna (siti ufficiali e associazioni)"
+  ],
+  "lat": 40.0037,
+  "lng": 8.6495
  },
  {
   "name": "Meigamma",
